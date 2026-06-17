@@ -1,0 +1,156 @@
+# =========================
+
+# Python
+
+# =========================
+
+**pycache**/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+
+venv/
+env/
+ENV/
+.venv/
+airflow-env/
+
+# Python Build Artifacts
+
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Testing & Coverage
+
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+
+# Jupyter
+
+.ipynb_checkpoints/
+
+# =========================
+
+# Environment Variables
+
+# =========================
+
+.env
+.env.*
+!.env.example
+
+# =========================
+
+# Logs
+
+# =========================
+
+logs/
+*.log
+
+# =========================
+
+# Airflow
+
+# =========================
+
+# Airflow
+api-data-ingestion/airflow/logs/
+api-data-ingestion/airflow/*.db
+api-data-ingestion/airflow/*.cfg
+api-data-ingestion/airflow/webserver_config.py
+
+# Generic logs
+logs/
+*.log
+
+airflow/logs/
+airflow/plugins/**pycache**/
+airflow/airflow.cfg
+airflow/airflow.db
+airflow/webserver_config.py
+
+# Airflow PID files
+
+airflow/*.pid
+
+# =========================
+
+# Docker
+
+# =========================
+
+docker-compose.override.yml
+
+# =========================
+
+# VS Code / IDE
+
+# =========================
+
+.vscode/
+.idea/
+
+# =========================
+
+# OS Files
+
+# =========================
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+
+# Database Files
+
+# =========================
+
+*.sqlite
+*.db
+
+# =========================
+
+# WSL / Linux Temp Files
+
+# =========================
+
+*.swp
+*.swo
+*~
+
+# =========================
+
+# Node.js (future-proof)
+
+# =========================
+
+node_modules/
+
+# =========================
+
+# Terraform (future-proof)
+
+# =========================
+
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# =========================
+
+# Miscellaneous
+
+# =========================
+
+tmp/
+temp/
+cache/
