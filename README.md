@@ -19,6 +19,9 @@ fipsar-internship/
 │   ├── .gitignore
 │   ├── requirements.txt
 │   └── README.md
+├── sql-data-analysis/
+│   ├── SQLQuery1--FIPSAR_Assignment.sql
+│   └── README.md
 ├── LICENSE
 ├── .gitignore
 └── README.md
@@ -36,6 +39,14 @@ Build a real-time data ingestion pipeline that:
 * Automates execution using Apache Airflow
 * Runs Airflow in Docker containers using WSL2
 
+### 2. SQL Data Analysis Assignment
+
+Analyze the `AdventureWorksDW2025` data warehouse with T-SQL queries for finance, call center, and customer survey metrics.
+
+* Aggregates financial results by organization, currency, department, scenario, and account
+* Reports call center performance by shift, date, and wage type
+* Summarizes customer purchase behavior by gender, first purchase date, and age range
+
 ## Technology Stack
 
 * Python
@@ -43,8 +54,21 @@ Build a real-time data ingestion pipeline that:
 * Apache Airflow
 * Docker
 * WSL2 (Ubuntu)
+* Microsoft SQL Server
+* SQL Server Management Studio (SSMS) 22
+* AdventureWorksDW2025 sample database
 * Git & GitHub
 * VS Code
+
+## SQL Data Analysis Setup
+
+The SQL assignment uses Microsoft SQL Server and SSMS 22 with the `AdventureWorksDW2025` sample database.
+
+1. Install Microsoft SQL Server Developer Edition or SQL Server Express.
+2. Install SQL Server Management Studio 22.
+3. Download and restore the `AdventureWorksDW2025` sample database into your local SQL Server instance.
+4. Open `sql-data-analysis/SQLQuery1--FIPSAR_Assignment.sql` in SSMS.
+5. Connect to `localhost` or your named instance, then execute the script using `AdventureWorksDW2025`.
 
 ## Learning Outcomes
 
