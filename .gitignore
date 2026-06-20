@@ -7,6 +7,11 @@
 **pycache**/
 *.py[cod]
 *$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+*.whl
 
 # Virtual Environments
 
@@ -31,6 +36,8 @@ dist/
 htmlcov/
 .tox/
 .mypy_cache/
+pip-log.txt
+pip-delete-this-directory.txt
 
 # Jupyter
 
@@ -64,8 +71,9 @@ logs/
 # Airflow
 api-data-ingestion/airflow/logs/
 api-data-ingestion/airflow/*.db
-api-data-ingestion/airflow/*.cfg
 api-data-ingestion/airflow/webserver_config.py
+api-data-ingestion/airflow/simple_auth_manager_passwords.json*
+api-data-ingestion/airflow/*.pid
 
 # Generic logs
 logs/
@@ -73,13 +81,23 @@ logs/
 
 airflow/logs/
 airflow/plugins/**pycache**/
-airflow/airflow.cfg
 airflow/airflow.db
 airflow/webserver_config.py
+airflow/simple_auth_manager_passwords.json*
 
 # Airflow PID files
 
 airflow/*.pid
+
+# =========================
+
+# Databases
+
+# =========================
+
+*.db
+*.sqlite
+*.sqlite3
 
 # =========================
 
@@ -91,12 +109,33 @@ docker-compose.override.yml
 
 # =========================
 
+# Temporary & Backup Files
+
+# =========================
+
+*.tmp
+*.bak
+*~
+*.swp
+*.swo
+
+# =========================
+
 # VS Code / IDE
 
 # =========================
 
 .vscode/
 .idea/
+
+# =========================
+
+# OS
+
+# =========================
+
+.DS_Store
+Thumbs.db
 
 # =========================
 

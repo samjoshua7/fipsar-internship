@@ -1,18 +1,95 @@
+# =========================
+# Python
+# =========================
+
+**pycache**/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+*.whl
+
+# Virtual Environments
 venv/
-__pycache__/
-*.pyc
+env/
+ENV/
+.venv/
+airflow-env/
+
+# =========================
+# Environment Files
+# =========================
 
 .env
+.env.local
+.env.*.local
+.env.*.production
+!.env.example
 
-logs/*.log
+# =========================
+# Testing & Coverage
+# =========================
 
-.airflow/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# =========================
+# Airflow
+# =========================
+
+airflow.db
+airflow/*.pid
+airflow/logs/
+airflow/plugins/**/__pycache__/
+airflow/webserver_config.py
+airflow/simple_auth_manager_passwords.json*
+api-data-ingestion/airflow/logs/
+api-data-ingestion/airflow/*.db
+
+# =========================
+# Docker
+# =========================
+
+docker-compose.override.yml
+
+# =========================
+# IDE & Editor
+# =========================
 
 .idea/
 .vscode/
+*.swp
+*.swo
+*~
 
-airflow.db
-
-*.sqlite
+# =========================
+# OS & System
+# =========================
 
 .DS_Store
+Thumbs.db
+
+# =========================
+# Logs & Temporary Files
+# =========================
+
+logs/
+*.log
+*.tmp
+*.bak
+
+# =========================
+# Databases
+# =========================
+
+*.sqlite
+*.sqlite3
+*.db
