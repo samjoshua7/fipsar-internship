@@ -1,0 +1,26 @@
+# =============================================================
+# FIPSAR Internship — Python Dependencies
+# Install: pip install -r requirements.txt
+# Note: Airflow and its providers are installed inside Docker.
+#       This file is for local development and script testing only.
+# =============================================================
+
+# ── Pipeline core ─────────────────────────────────────────────
+psycopg2-binary==2.9.9
+python-dotenv==1.0.1
+requests==2.31.0
+
+# ── Airflow (for local DAG validation only) ───────────────────
+apache-airflow==2.9.1
+sqlalchemy==2.0.30
+
+# ── Security key generation ───────────────────────────────────
+cryptography==42.0.8
+
+# ── Testing ───────────────────────────────────────────────────
+pytest==8.2.0
+pytest-mock==3.14.0
+
+# ── Linting / formatting ──────────────────────────────────────
+black==24.4.2
+flake8==7.0.0

@@ -1,0 +1,3 @@
+# Place Airflow DAG files here.
+# Each .py file in this folder is auto-discovered by the Airflow scheduler.
+# Example: ingestion_dag.py, transformation_dag.py

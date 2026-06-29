@@ -1,0 +1,67 @@
+# =============================================================
+# FIPSAR Internship — .gitignore
+# =============================================================
+
+# ── Secrets — never commit these ──────────────────────────────
+.env
+*.env.local
+*.env.production
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+ENV/
+.Python
+
+# ── Logs ──────────────────────────────────────────────────────
+logs/
+*.log
+*.log.*
+
+# ── Airflow ───────────────────────────────────────────────────
+airflow.db
+airflow.cfg
+standalone_admin_password.txt
+airflow/logs/
+unittests.cfg
+
+# ── Docker ────────────────────────────────────────────────────
+docker-compose.override.yml
+
+# ── Testing & Coverage ────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ── IDE / Editor ──────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── PostgreSQL ────────────────────────────────────────────────
+*.dump
+*.sql.gz
+*.backup
+
+# ── Temporary / personal files ────────────────────────────────
+notes.txt
+*.tmp
+*.temp

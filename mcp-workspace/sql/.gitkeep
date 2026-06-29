@@ -1,0 +1,5 @@
+# SQL files go here.
+# Examples:
+#   schema/   → CREATE TABLE statements
+#   seed/     → initial/reference data inserts
+#   queries/  → ad-hoc analysis queries

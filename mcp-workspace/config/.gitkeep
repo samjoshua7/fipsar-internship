@@ -1,0 +1,3 @@
+# Airflow and DB connection config (non-secret values only).
+# Secret values → .env file (never commit that).
+# Examples: airflow_connections.json, logging.yaml

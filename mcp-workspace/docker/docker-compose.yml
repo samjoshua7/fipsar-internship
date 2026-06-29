@@ -1,0 +1,178 @@
+# =============================================================
+# FIPSAR Internship — Docker Compose
+# Author  : Joshua
+# Purpose : Spin up PostgreSQL + Airflow (webserver + scheduler)
+#           in containers that talk to each other on a private
+#           network. One command starts the entire stack.
+#
+# Services:
+#   postgres            → PostgreSQL 15 (our data store)
+#   airflow-init        → one-shot container: initialises Airflow
+#                         DB and creates the admin user
+#   airflow-webserver   → Airflow UI at http://localhost:8080
+#   airflow-scheduler   → picks up DAGs and runs tasks
+#
+# Usage:
+#   Start  : docker compose -f docker/docker-compose.yml --env-file .env up -d
+#   Stop   : docker compose -f docker/docker-compose.yml down
+#   Logs   : docker compose -f docker/docker-compose.yml logs -f
+#   Destroy: docker compose -f docker/docker-compose.yml down -v
+# =============================================================
+
+volumes:
+  postgres_data:
+  airflow_logs:
+
+networks:
+  fipsar_net:
+    driver: bridge
+
+# =============================================================
+# YAML ANCHOR — shared Airflow environment variables
+# <<: *airflow-env injects all of these into each service
+# =============================================================
+x-airflow-env: &airflow-env
+  AIRFLOW__CORE__EXECUTOR: LocalExecutor
+
+  # SQL_ALCHEMY_CONN tells Airflow where its own metadata DB is.
+  # "postgres" here is the Docker service name — resolves on fipsar_net.
+  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
+
+  AIRFLOW__CORE__FERNET_KEY: "${AIRFLOW__CORE__FERNET_KEY}"
+  AIRFLOW__WEBSERVER__SECRET_KEY: "${AIRFLOW__WEBSERVER__SECRET_KEY}"
+  AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+  AIRFLOW__API__AUTH_BACKENDS: "airflow.api.auth.backend.basic_auth"
+  AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: "true"
+  AIRFLOW_ADMIN_USER: "${AIRFLOW_ADMIN_USER}"
+  AIRFLOW_ADMIN_PASSWORD: "${AIRFLOW_ADMIN_PASSWORD}"
+  AIRFLOW_ADMIN_EMAIL: "${AIRFLOW_ADMIN_EMAIL}"
+
+  # Project vars read by ingest_posts.py inside the container
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "${POSTGRES_DB}"
+  POSTGRES_USER: "${POSTGRES_USER}"
+  POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+  API_BASE_URL: "${API_BASE_URL}"
+  API_TIMEOUT: "${API_TIMEOUT}"
+  LOG_LEVEL: "${LOG_LEVEL}"
+  LOG_DIR: /opt/airflow/logs
+
+services:
+
+  # -----------------------------------------------------------
+  # SERVICE 1 — PostgreSQL
+  # -----------------------------------------------------------
+  postgres:
+    image: postgres:15-alpine
+    container_name: fipsar_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../sql/create_tables.sql:/docker-entrypoint-initdb.d/01_create_tables.sql:ro
+    ports:
+      - "5433:5432"  # 5433 on host to avoid conflict with Windows PostgreSQL on 5432
+    networks:
+      - fipsar_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+
+  # -----------------------------------------------------------
+  # SERVICE 2 — Airflow Init (runs once, exits)
+  # Initialises the Airflow metadata DB schema and creates
+  # the admin user. Exits cleanly after completion.
+  # depends_on postgres healthcheck ensures DB is ready first.
+  # -----------------------------------------------------------
+  airflow-init:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fipsar_airflow_init
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      <<: *airflow-env
+    volumes:
+      - ../dags:/opt/airflow/dags
+      - ../scripts:/opt/airflow/scripts
+      - airflow_logs:/opt/airflow/logs
+    networks:
+      - fipsar_net
+    # FIX: entire command on one line — no multiline YAML breaking bash parsing
+    command: >
+      bash -c "airflow db upgrade && airflow users create --username ${AIRFLOW_ADMIN_USER} --password ${AIRFLOW_ADMIN_PASSWORD} --firstname Joshua --lastname FIPSAR --role Admin --email ${AIRFLOW_ADMIN_EMAIL}"
+    restart: "no"
+
+
+  # -----------------------------------------------------------
+  # SERVICE 3 — Airflow Webserver
+  # -----------------------------------------------------------
+  airflow-webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fipsar_airflow_webserver
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    environment:
+      <<: *airflow-env
+    volumes:
+      - ../dags:/opt/airflow/dags
+      - ../scripts:/opt/airflow/scripts
+      - airflow_logs:/opt/airflow/logs
+    ports:
+      - "8080:8080"
+    networks:
+      - fipsar_net
+    command: webserver
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+
+  # -----------------------------------------------------------
+  # SERVICE 4 — Airflow Scheduler
+  # -----------------------------------------------------------
+  airflow-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fipsar_airflow_scheduler
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    environment:
+      <<: *airflow-env
+    volumes:
+      - ../dags:/opt/airflow/dags
+      - ../scripts:/opt/airflow/scripts
+      - airflow_logs:/opt/airflow/logs
+    networks:
+      - fipsar_net
+    command: scheduler
+    healthcheck:
+      test: ["CMD", "airflow", "jobs", "check", "--job-type", "SchedulerJob", "--limit", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
